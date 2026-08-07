@@ -8,7 +8,53 @@ function pollInside(poll) {
   }).join('')}<div class="poll-meta"><span>${Number(poll.totalVotes) || 0} votes</span><a href="/poll/${encodeURIComponent(poll.slug)}">Open poll ↗</a></div></div>`;
 }
 
+let dashboardRefreshTimer = null;
+let dashboardRefreshBusy = false;
+let dashboardRefreshContext = null;
+
+function stopDashboardRefresh() {
+  clearInterval(dashboardRefreshTimer);
+  dashboardRefreshTimer = null;
+  dashboardRefreshContext = null;
+  dashboardRefreshBusy = false;
+}
+
+async function refreshDashboardNow({ silent = true } = {}) {
+  const context = dashboardRefreshContext;
+  if (!context || dashboardRefreshBusy || document.hidden || $('.modal-backdrop')) return;
+  if ((typeof inboxSelectionMode !== 'undefined' && inboxSelectionMode) || $$('audio').some((audio) => !audio.paused)) return;
+  dashboardRefreshBusy = true;
+  try {
+    if (context.active === 'polls') {
+      await renderPolls(context.inbox, context.token, { silent: true });
+    } else {
+      const data = await api(`/api/inboxes/${encodeURIComponent(context.inbox.slug)}/messages`, {
+        headers: ownerHeaders(context.token)
+      });
+      if (!data.inbox || !Array.isArray(data.messages)) throw new Error('The inbox response is invalid.');
+      context.inbox = data.inbox;
+      renderInbox(data.inbox, data.messages, context.token, { preserveSelection: true, silent: true });
+    }
+    const status = $('#refreshStatus');
+    if (status) status.textContent = `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(new Date())}`;
+  } catch (error) {
+    if (!silent) toast(error.message);
+  } finally {
+    dashboardRefreshBusy = false;
+  }
+}
+
+function startDashboardRefresh(inbox, token, active) {
+  stopDashboardRefresh();
+  dashboardRefreshContext = { inbox, token, active };
+  dashboardRefreshTimer = setInterval(() => refreshDashboardNow(), 10000);
+}
+
+window.addEventListener('focus', () => refreshDashboardNow());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDashboardNow(); });
+
 async function dashboard(slug, active = 'inbox') {
+  stopDashboardRefresh();
   const token = ownerToken(slug);
   if (!token) return unlock(slug);
   try {
@@ -17,24 +63,31 @@ async function dashboard(slug, active = 'inbox') {
     saveOwner(data.inbox.slug, token);
     if (data.inbox.slug !== slug) removeOwner(slug);
     const link = `${location.origin}/u/${data.inbox.slug}`;
-    app.innerHTML = `<div class="shell">${topbar('<button id="signOut" class="top-action" type="button">Sign out</button>')}<main class="page"><nav class="tabs"><button class="tab ${active === 'inbox' ? 'active' : ''}" type="button" data-tab="inbox">Inbox</button><button class="tab ${active === 'polls' ? 'active' : ''}" type="button" data-tab="polls">Polls</button></nav><section class="link-card"><div class="label">Your anonymous link</div><div class="big-link">/${esc(data.inbox.slug)}</div><div class="link-actions"><button id="editLink" class="btn" type="button">Edit</button><button id="shareLink" class="btn sage" type="button">Share link ↗</button></div></section><div id="content"></div></main></div>`;
-    $('#signOut').onclick = () => { removeOwner(data.inbox.slug); nav('/'); };
+    app.innerHTML = `<div class="shell">${topbar('<button id="signOut" class="top-action" type="button">Sign out</button>')}<main class="page"><nav class="tabs"><button class="tab ${active === 'inbox' ? 'active' : ''}" type="button" data-tab="inbox">Inbox</button><button class="tab ${active === 'polls' ? 'active' : ''}" type="button" data-tab="polls">Polls</button></nav><section class="link-card"><div class="label">Your anonymous link</div><div class="big-link">/${esc(data.inbox.slug)}</div><div class="link-actions"><button id="editLink" class="btn" type="button">Edit</button><button id="shareLink" class="btn sage" type="button">Share link ↗</button></div></section><div class="refresh-line"><span class="refresh-dot" aria-hidden="true"></span><span>Auto-refresh on</span><span id="refreshStatus">Updated now</span></div><div id="content"></div></main></div>`;
+    $('#signOut').onclick = () => { stopDashboardRefresh(); removeOwner(data.inbox.slug); nav('/'); };
     $('#shareLink').onclick = () => share({ title: 'Send me something anonymously', url: link }, link);
     $('#editLink').onclick = () => editLink(data.inbox, token);
-    $$('.tab').forEach((button) => button.onclick = () => {
+    $$('.tab').forEach((button) => button.onclick = async () => {
       const tab = button.dataset.tab === 'polls' ? 'polls' : 'inbox';
       history.replaceState({}, '', `/dashboard/${data.inbox.slug}?tab=${tab}`);
-      dashboard(data.inbox.slug, tab);
+      $$('.tab').forEach((item) => item.classList.toggle('active', item.dataset.tab === tab));
+      if (dashboardRefreshContext) dashboardRefreshContext.active = tab;
+      if (tab === 'polls') await renderPolls(data.inbox, token);
+      else renderInbox(data.inbox, data.messages, token);
+      await refreshDashboardNow();
     });
     if (active === 'polls') await renderPolls(data.inbox, token);
     else renderInbox(data.inbox, data.messages, token);
+    startDashboardRefresh(data.inbox, token, active);
   } catch (error) {
+    stopDashboardRefresh();
     if ([403, 404].includes(error.status)) removeOwner(slug);
     unlock(slug, error.message);
   }
 }
 
 function unlock(slug, message = 'This dashboard is private.') {
+  stopDashboardRefresh();
   app.innerHTML = `${topbar()}<main class="page"><div class="section-kicker">Private</div><h1>Inbox</h1><div class="card"><p>${esc(message)}</p><p>Your owner access is stored in the browser that created the inbox.</p><button class="btn primary" id="goHome" type="button">Go home</button></div></main>`;
   $('#goHome')?.addEventListener('click', () => nav('/'));
 }
@@ -54,6 +107,7 @@ function editLink(inbox, token) {
       if (!validSlug(result.slug)) throw new Error('The server returned an invalid link name.');
       saveOwner(result.slug, token);
       if (result.slug !== inbox.slug) removeOwner(inbox.slug);
+      stopDashboardRefresh();
       nav(`/dashboard/${result.slug}`);
     } catch (error) {
       toast(error.message);
