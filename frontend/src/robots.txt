@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /account
+Disallow: /u/
+Disallow: /poll/
+
+Sitemap: https://anonymous.gojodev.name.ng/sitemap.xml

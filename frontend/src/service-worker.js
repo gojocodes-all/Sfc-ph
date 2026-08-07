@@ -1,7 +1,8 @@
-const CACHE_NAME = 'phx-shell-v4';
+const CACHE_NAME = 'picnym-shell-v2';
 const APP_SHELL = [
-  '/', '/index.html', '/style.css', '/config.js',
-  '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js',
+  '/', '/index.html', '/style.css', '/config.js', '/auth.js',
+  '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js', '/v2.js', '/dashboard-v2.js',
+  '/info.css', '/features.html', '/about.html', '/privacy.html', '/terms.html', '/safety.html',
   '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'
 ];
 
@@ -22,11 +23,12 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/dashboard/') || url.pathname === '/account') return;
 
   event.respondWith((async () => {
     try {
       const response = await fetch(request);
-      if (response.ok) {
+      if (response.ok && !url.pathname.startsWith('/u/') && !url.pathname.startsWith('/poll/')) {
         const cache = await caches.open(CACHE_NAME);
         cache.put(request, response.clone()).catch(() => null);
       }

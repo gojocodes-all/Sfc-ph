@@ -1,13 +1,15 @@
 {
-  "name": "PH X SFC ANONYMOUS",
-  "short_name": "PH X SFC",
-  "description": "Anonymous messages, images, voice notes and polls.",
+  "id": "/",
+  "name": "PICNYM — Anonymous Messages",
+  "short_name": "PICNYM",
+  "description": "Anonymous messages, photos, voice notes and polls through one shareable link.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f1f2ed",
   "theme_color": "#12264b",
+  "categories": ["social", "lifestyle"],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }

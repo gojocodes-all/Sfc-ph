@@ -1,10 +1,17 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/u/:path*", "destination": "/index.html" },
     { "source": "/dashboard/:path*", "destination": "/index.html" },
-    { "source": "/poll/:path*", "destination": "/index.html" }
+    { "source": "/poll/:path*", "destination": "/index.html" },
+    { "source": "/account", "destination": "/index.html" },
+    { "source": "/features", "destination": "/features.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/safety", "destination": "/safety.html" }
   ],
   "headers": [
     {
@@ -15,6 +22,22 @@
         { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=(self)" },
         { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ahvusnmuyfvdzjmdkgzj.supabase.co; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" }
       ]
+    },
+    {
+      "source": "/dashboard/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/account",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/u/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow, noarchive" }]
+    },
+    {
+      "source": "/poll/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow, noarchive" }]
     }
   ]
 }
