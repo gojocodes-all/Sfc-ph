@@ -1,8 +1,17 @@
 {
-  "name": "ph-x-sfc-anonymous-frontend",
-  "version": "1.0.0",
+  "name": "picnym-frontend",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "scripts": { "build": "node build.mjs" },
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node --check build.mjs && node --check src/v2.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
   "engines": { "node": ">=20" }
 }
