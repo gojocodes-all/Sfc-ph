@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "check": "node --check build.mjs && node --check src/v2.js"
+    "check": "node --check build.mjs && node --check src/v2.js && node --check src/dashboard-v2.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0"
