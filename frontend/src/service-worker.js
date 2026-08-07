@@ -1,8 +1,8 @@
-const CACHE_NAME = 'phx-shell-v4';
+const CACHE_NAME = 'nymbox-shell-v5';
 const APP_SHELL = [
-  '/', '/index.html', '/style.css', '/config.js',
+  '/', '/index.html', '/style.css', '/config.js', '/auth.js',
   '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js',
-  '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'
+  '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/og-image.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -22,6 +22,11 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.startsWith('/auth') || url.pathname.startsWith('/account') || url.pathname.startsWith('/dashboard')) {
+    event.respondWith(fetch(request).catch(() => caches.match('/index.html')));
+    return;
+  }
 
   event.respondWith((async () => {
     try {
