@@ -40,4 +40,4 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno check supabase/functions/picnym-api/index.ts
+      - run: deno check --config supabase/functions/picnym-api/deno.json supabase/functions/picnym-api/index.ts
