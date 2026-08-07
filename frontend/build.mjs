@@ -8,5 +8,5 @@ const dist = resolve(root, 'dist');
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
 await cp(src, dist, { recursive: true });
-const apiBase = (process.env.API_BASE_URL || 'https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/phx').replace(/\/$/, '');
+const apiBase = (process.env.API_BASE_URL || '').replace(/\/$/, '');
 await writeFile(resolve(dist, 'config.js'), `window.__PHX_CONFIG__ = ${JSON.stringify({ apiBase })};\n`, 'utf8');
