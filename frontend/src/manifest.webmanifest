@@ -1,13 +1,14 @@
 {
-  "name": "PH X SFC ANONYMOUS",
-  "short_name": "PH X SFC",
-  "description": "Anonymous messages, images, voice notes and polls.",
+  "name": "NYMBOX — Anonymous Messages",
+  "short_name": "NYMBOX",
+  "description": "Anonymous text, images, voice notes and polls in one shareable inbox.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#f1f2ed",
   "theme_color": "#12264b",
+  "categories": ["social", "utilities"],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
