@@ -1,10 +1,11 @@
 # Supabase backend
 
-The production Supabase project is already live and must remain the data/storage backend.
+Production project: `ahvusnmuyfvdzjmdkgzj`
 
-- Project: `ahvusnmuyfvdzjmdkgzj`
-- Edge Function: `phx`
+- API Edge Function: `phx-api`
+- Legacy/canonical redirect UI function: `phx`
 - Storage bucket: `phx-media`
 - Core tables: `inboxes`, `messages`, `blocks`, `polls`, `poll_options`, `votes`
+- Supporting moderation table: `reports`
 
-This deployment does not migrate or recreate Supabase. Render proxies the existing Edge Function, preserving current data and stored media.
+The browser uses `phx-api` directly. Database tables have RLS enabled and no anonymous table policies; the Edge Function is the application boundary and uses the service role internally.
