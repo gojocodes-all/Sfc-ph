@@ -22,6 +22,7 @@ function stopDashboardRefresh() {
 async function refreshDashboardNow({ silent = true } = {}) {
   const context = dashboardRefreshContext;
   if (!context || dashboardRefreshBusy || document.hidden || $('.modal-backdrop')) return;
+  if ((typeof inboxSelectionMode !== 'undefined' && inboxSelectionMode) || $$('audio').some((audio) => !audio.paused)) return;
   dashboardRefreshBusy = true;
   try {
     if (context.active === 'polls') {
