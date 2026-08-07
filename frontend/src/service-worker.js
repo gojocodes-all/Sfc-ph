@@ -1,7 +1,7 @@
 const CACHE_NAME = 'picnym-shell-v2';
 const APP_SHELL = [
   '/', '/index.html', '/style.css', '/config.js', '/auth.js',
-  '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js', '/v2.js',
+  '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js', '/v2.js', '/dashboard-v2.js',
   '/info.css', '/features.html', '/about.html', '/privacy.html', '/terms.html', '/safety.html',
   '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'
 ];
