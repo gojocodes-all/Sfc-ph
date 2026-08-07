@@ -28,7 +28,7 @@ async function refreshDashboardNow({ silent = true } = {}) {
     if (context.active === 'polls') {
       await renderPolls(context.inbox, context.token, { silent: true });
     } else {
-      const data = await api(`/api/inboxes/${encodeURIComponent(context.inbox.slug)}/messages`, {
+      const data = await api(`/api/inboxes/${encodeURIComponent(context.inbox.slug)}/messages?limit=60`, {
         headers: ownerHeaders(context.token)
       });
       if (!data.inbox || !Array.isArray(data.messages)) throw new Error('The inbox response is invalid.');
@@ -38,6 +38,7 @@ async function refreshDashboardNow({ silent = true } = {}) {
     const status = $('#refreshStatus');
     if (status) status.textContent = `Updated ${new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(new Date())}`;
   } catch (error) {
+    if (error.status === 401) clearAuthSession();
     if (!silent) toast(error.message);
   } finally {
     dashboardRefreshBusy = false;
@@ -47,7 +48,7 @@ async function refreshDashboardNow({ silent = true } = {}) {
 function startDashboardRefresh(inbox, token, active) {
   stopDashboardRefresh();
   dashboardRefreshContext = { inbox, token, active };
-  dashboardRefreshTimer = setInterval(() => refreshDashboardNow(), 10000);
+  dashboardRefreshTimer = setInterval(() => refreshDashboardNow(), 20000);
 }
 
 window.addEventListener('focus', () => refreshDashboardNow());
@@ -55,17 +56,20 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) refr
 
 async function dashboard(slug, active = 'inbox') {
   stopDashboardRefresh();
+  await refreshAuthSession().catch(() => null);
   const token = ownerToken(slug);
-  if (!token) return unlock(slug);
+  const hasAccount = Boolean(authAccessToken());
+  if (!token && !hasAccount) return unlock(slug);
   try {
-    const data = await api(`/api/inboxes/${encodeURIComponent(slug)}/messages`, { headers: ownerHeaders(token) });
+    const data = await api(`/api/inboxes/${encodeURIComponent(slug)}/messages?limit=60`, { headers: ownerHeaders(token) });
     if (!data.inbox || !validSlug(data.inbox.slug) || !Array.isArray(data.messages)) throw new Error('The inbox response is invalid.');
     saveOwner(data.inbox.slug, token);
     if (data.inbox.slug !== slug) removeOwner(slug);
     const link = `${location.origin}/u/${data.inbox.slug}`;
-    app.innerHTML = `<div class="shell">${topbar('<button id="signOut" class="top-action" type="button">Sign out</button>')}<main class="page"><nav class="tabs"><button class="tab ${active === 'inbox' ? 'active' : ''}" type="button" data-tab="inbox">Inbox</button><button class="tab ${active === 'polls' ? 'active' : ''}" type="button" data-tab="polls">Polls</button></nav><section class="link-card"><div class="label">Your anonymous link</div><div class="big-link">/${esc(data.inbox.slug)}</div><div class="link-actions"><button id="editLink" class="btn" type="button">Edit</button><button id="shareLink" class="btn sage" type="button">Share link ↗</button></div></section><div class="refresh-line"><span class="refresh-dot" aria-hidden="true"></span><span>Auto-refresh on</span><span id="refreshStatus">Updated now</span></div><div id="content"></div></main></div>`;
-    $('#signOut').onclick = () => { stopDashboardRefresh(); removeOwner(data.inbox.slug); nav('/'); };
-    $('#shareLink').onclick = () => share({ title: 'Send me something anonymously', url: link }, link);
+    const topAction = hasAccount ? '<a class="top-action" href="/account">My account</a>' : '<button id="legacySignOut" class="top-action" type="button">Close inbox</button>';
+    app.innerHTML = `<div class="shell">${topbar(topAction)}<main class="page"><nav class="tabs"><button class="tab ${active === 'inbox' ? 'active' : ''}" type="button" data-tab="inbox">Inbox</button><button class="tab ${active === 'polls' ? 'active' : ''}" type="button" data-tab="polls">Polls</button></nav><section class="link-card"><div class="label">Your anonymous link</div><div class="big-link">/${esc(data.inbox.slug)}</div><div class="link-actions"><button id="editLink" class="btn" type="button">Edit</button><button id="shareLink" class="btn sage" type="button">Share link ↗</button></div></section><div class="refresh-line"><span class="refresh-dot" aria-hidden="true"></span><span>Auto-refresh on</span><span id="refreshStatus">Updated now</span></div><div id="content"></div></main>${footer()}</div>`;
+    $('#legacySignOut')?.addEventListener('click', () => { stopDashboardRefresh(); removeOwner(data.inbox.slug); nav('/'); });
+    $('#shareLink').onclick = () => share({ title: 'Send me something anonymously on NYMBOX', url: link }, link);
     $('#editLink').onclick = () => editLink(data.inbox, token);
     $$('.tab').forEach((button) => button.onclick = async () => {
       const tab = button.dataset.tab === 'polls' ? 'polls' : 'inbox';
@@ -81,15 +85,16 @@ async function dashboard(slug, active = 'inbox') {
     startDashboardRefresh(data.inbox, token, active);
   } catch (error) {
     stopDashboardRefresh();
-    if ([403, 404].includes(error.status)) removeOwner(slug);
+    if (error.status === 401) clearAuthSession();
+    if ([403, 404].includes(error.status) && token) removeOwner(slug);
     unlock(slug, error.message);
   }
 }
 
 function unlock(slug, message = 'This dashboard is private.') {
   stopDashboardRefresh();
-  app.innerHTML = `${topbar()}<main class="page"><div class="section-kicker">Private</div><h1>Inbox</h1><div class="card"><p>${esc(message)}</p><p>Your owner access is stored in the browser that created the inbox.</p><button class="btn primary" id="goHome" type="button">Go home</button></div></main>`;
-  $('#goHome')?.addEventListener('click', () => nav('/'));
+  const loggedIn = Boolean(authAccessToken());
+  app.innerHTML = `${topbar(loggedIn ? '<a class="top-action" href="/account">My account</a>' : '<a class="top-action" href="/auth">Sign in</a>')}<main class="page"><div class="section-kicker">Private</div><h1>Inbox</h1><div class="card"><p>${esc(message)}</p><p>Access requires the account that owns this inbox or the original browser owner key.</p><div class="link-actions"><a class="btn primary" href="${loggedIn ? '/account' : `/auth?next=${encodeURIComponent(`/dashboard/${slug}`)}`}">${loggedIn ? 'Open my account' : 'Sign in'}</a><a class="btn" href="/">Go home</a></div></div></main>${footer()}`;
 }
 
 function editLink(inbox, token) {
