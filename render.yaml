@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ph-x-sfc-anonymous-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SUPABASE_FUNCTION_URL
+        value: https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/phx
