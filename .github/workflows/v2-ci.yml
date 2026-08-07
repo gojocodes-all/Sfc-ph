@@ -41,3 +41,12 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check --config supabase/functions/picnym-api/deno.json supabase/functions/picnym-api/index.ts
+      - name: Smoke test deployed V2 API
+        run: |
+          API="https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api"
+          curl --fail --silent --show-error "$API/api/health" | tee /tmp/health.json
+          grep -q '"ok":true' /tmp/health.json
+          grep -q '"version":3' /tmp/health.json
+          status=$(curl --silent --output /tmp/account.json --write-out '%{http_code}' "$API/api/account")
+          test "$status" = "401"
+          grep -q 'Sign in required' /tmp/account.json
