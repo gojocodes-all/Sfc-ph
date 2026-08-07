@@ -1,48 +1,111 @@
-# PH X SFC ANONYMOUS
+# PICNYM
 
-Production source for the PH × SFC anonymous messaging app.
+PICNYM is an anonymous messaging web app for text, photos, voice notes and polls. Users create one shareable inbox link, receive anonymous content, reply from a private dashboard and turn messages into branded shareable image cards.
+
+> PICNYM V2 is currently developed on `v2/picnym-product`. The existing production release remains live while V2 is tested.
 
 ## Features
 
-- anonymous text, image and voice-note messages
-- browser voice recording and audio uploads
-- direct sharing of messages and media
-- replies that generate shareable answer-card PNGs
-- anonymous polls with shareable links and duplicate-vote protection
-- private Inbox / Polls owner dashboard
-- anonymous sender blocking and message deletion
+- anonymous text messages
+- anonymous image messages with optional captions
+- browser voice recording and audio-file uploads
+- anonymous polls and duplicate-vote protection
+- private inbox dashboard with automatic refresh
+- replies and shareable PNG answer cards
+- multi-select message sharing as separate image files
+- sender blocking and message deletion
+- installable PWA
+- email/password accounts with portable inbox ownership
+- legacy inbox claiming for pre-account users
+- Google OAuth client flow, enabled when provider credentials are configured
+- crawlable product, feature, safety, privacy, terms and about pages
 
-## Canonical production architecture
+## Architecture
 
 ```text
-Browser → Vercel static frontend → Supabase Edge Function `phx-api`
-                                    ├─ Postgres
-                                    └─ `phx-media` Storage
+Browser / PWA
+    │
+    ├── Supabase Auth
+    │     ├── email + password
+    │     └── Google OAuth (provider credentials required)
+    │
+    └── Supabase Edge Function `picnym-api`
+          ├── PostgreSQL
+          └── `phx-media` Storage
 ```
 
-The frontend calls `phx-api` directly over CORS. This avoids request-body proxy bugs for image and voice-note uploads. The existing Supabase project remains the only database/storage backend.
+The API keeps public anonymous-sending routes separate from protected account/inbox-owner routes. Protected routes accept a signed-in Supabase JWT or a legacy owner token where migration compatibility is required.
 
-A Render gateway is retained as an optional fallback/diagnostic service, but it is not required by the browser path.
+## Reliability and scale work in V2
 
-## Vercel
+- inbox message pagination, default 40 and capped at 80 per request
+- batched poll/options/vote loading instead of per-message N+1 queries
+- ownership lookup index prepared for rollout
+- public/private cache separation
+- visible-tab-only dashboard polling with interaction pauses
+- upload size limits and MIME validation
+- voice recording waits for `MediaRecorder` finalization before upload
+- voice MIME parameters are normalized for mobile-browser compatibility
+- CI builds the frontend, validates SEO output, type-checks the Edge Function and smoke-tests the deployed V2 API
 
-- Project root: `frontend`
-- Build command: `npm run build`
-- Output directory: `dist`
-- Canonical domain: `https://anonymous.gojodev.name.ng`
-- API default: `https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/phx-api`
+## SEO
 
-`API_BASE_URL` can override the default. Direct visits to `/u/*`, `/dashboard/*` and `/poll/*` rewrite to the SPA entry point.
+Indexable product pages:
+
+- `/`
+- `/features`
+- `/about`
+- `/safety`
+- `/privacy`
+- `/terms`
+
+User-generated/private routes are deliberately excluded from search indexing:
+
+- `/u/*`
+- `/poll/*`
+- `/dashboard/*`
+- `/account`
+
+The frontend includes canonical metadata, Open Graph/Twitter metadata, JSON-LD, `robots.txt` and `sitemap.xml`.
+
+## Local frontend development
+
+Requirements: Node.js 20+
+
+```bash
+cd frontend
+npm install
+npm run check
+npm run build
+```
+
+Production output is generated in `frontend/dist`.
+
+### Optional build environment variables
+
+- `API_BASE_URL`
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY`
+- `SITE_URL`
+- `SUPPORT_PHONE`
+- `GOOGLE_OAUTH_ENABLED=true|false`
 
 ## Supabase
 
-The deployable API source is stored at `supabase/functions/phx-api/index.ts`. Tables are protected with RLS and accessed from the Edge Function with the service-role client. Owner tokens are stored only as hashes in the database.
+V2 API source:
 
-## Render fallback
+`supabase/functions/picnym-api/index.ts`
 
-- Root directory: `backend`
-- Build command: `npm install`
-- Start command: `npm start`
-- Health check: `/health`
+The current production API is kept separately during migration. Core application tables use Row Level Security with no direct public table policies; the Edge Function uses server-side service-role access and applies application authorization itself.
 
-The gateway buffers request bodies before forwarding them so multipart image/voice uploads are not broken by Node stream conversion.
+## Legal and safety
+
+PICNYM includes public Terms, Privacy and Safety pages. Anonymous means the sender's ordinary profile is not shown to the inbox owner; limited technical information can still be processed for abuse prevention, duplicate-vote protection and service security.
+
+## Creator
+
+Designed and developed by **Owojuyigbe Oluwajomiloju**.
+
+GOJO.DEV: https://www.gojodev.name.ng/
+
+Current project URL: https://anonymous.gojodev.name.ng/
