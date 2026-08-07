@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "noImplicitAny": false
   }
 }
