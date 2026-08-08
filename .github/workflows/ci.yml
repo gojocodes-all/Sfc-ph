@@ -29,6 +29,9 @@ jobs:
         run: |
           test -f dist/auth.js
           test -f dist/auth-ui.js
+          test -f dist/theme.js
+          test -f dist/pro.js
+          test -f dist/pro.css
           test -f dist/robots.txt
           test -f dist/sitemap.xml
           test -f dist/features.html
@@ -37,9 +40,10 @@ jobs:
           test -f dist/terms.html
           test -f dist/safety.html
           grep -q "PICNYM" dist/index.html
-          grep -q "picnym-api" dist/config.js
+          grep -q "picnym-api-v4" dist/config.js
+          grep -q "PICNYM PREMIUM" dist/pro.js
           grep -q "anonymous.gojodev.name.ng" dist/sitemap.xml
-          ! grep -R "PH X SFC" dist/index.html dist/app5.js dist/auth-ui.js
+          ! grep -R "PH X SFC" dist/index.html dist/app5.js dist/auth-ui.js dist/pro.js
 
   edge-function:
     runs-on: ubuntu-latest
@@ -49,12 +53,16 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check --config supabase/functions/picnym-api/deno.json supabase/functions/picnym-api/index.ts
-      - name: Smoke test deployed API
+      - run: deno check supabase/functions/picnym-api-v4/index.ts
+      - name: Smoke test deployed APIs
         run: |
-          API="https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api"
-          curl --fail --silent --show-error "$API/api/health" | tee /tmp/health.json
-          grep -q '"ok":true' /tmp/health.json
-          grep -q '"version":3' /tmp/health.json
-          status=$(curl --silent --output /tmp/account.json --write-out '%{http_code}' "$API/api/account")
+          CORE="https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api"
+          V4="https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api-v4"
+          curl --fail --silent --show-error "$CORE/api/health" | tee /tmp/core-health.json
+          grep -q '"ok":true' /tmp/core-health.json
+          curl --fail --silent --show-error "$V4/api/health" | tee /tmp/v4-health.json
+          grep -q '"ok":true' /tmp/v4-health.json
+          grep -q '"version":4' /tmp/v4-health.json
+          status=$(curl --silent --output /tmp/account.json --write-out '%{http_code}' "$V4/api/account")
           test "$status" = "401"
           grep -q 'Sign in required' /tmp/account.json
