@@ -15,6 +15,27 @@ async function syncGoogleAuthButton() {
   }
 }
 
+function addLegacyInboxShortcut() {
+  const card = $('.auth-card');
+  if (!card || $('#openLegacySaved')) return;
+  const saved = savedInboxes();
+  const last = localStorage.getItem('phsfc_last_inbox');
+  const slug = (last && saved.includes(last)) ? last : saved[0];
+  if (!slug) return;
+  const button = document.createElement('button');
+  button.id = 'openLegacySaved';
+  button.type = 'button';
+  button.className = 'btn sage';
+  button.style.cssText = 'width:100%;margin-top:10px';
+  button.textContent = 'Open saved inbox';
+  button.onclick = () => nav(`/dashboard/${encodeURIComponent(slug)}`);
+  card.appendChild(button);
+  const note = document.createElement('p');
+  note.className = 'form-note';
+  note.textContent = 'This inbox was saved on this device before PICNYM accounts. Sign in later to claim it to your account.';
+  card.appendChild(note);
+}
+
 function addForgotPasswordLink() {
   const form = $('#signinForm');
   if (!form || $('#forgotPassword')) return;
@@ -45,6 +66,7 @@ function addForgotPasswordLink() {
 
 async function enhanceAuthHome() {
   addForgotPasswordLink();
+  addLegacyInboxShortcut();
   await syncGoogleAuthButton();
 }
 
