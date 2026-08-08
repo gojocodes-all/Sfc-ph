@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#f1f2ed",
-  "theme_color": "#12264b",
+  "background_color": "#f7f7fb",
+  "theme_color": "#4c56e8",
   "categories": ["social", "lifestyle"],
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },

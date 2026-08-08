@@ -1,6 +1,6 @@
 # PICNYM
 
-PICNYM is a multimedia anonymous messaging product for text, photos, voice notes and polls. Users create an account, make one or more anonymous inbox links, receive content privately, reply, and share branded image cards.
+PICNYM is an 18+ multimedia anonymous messaging product for text, photos, voice notes and polls. Users create an account, make one or more anonymous inbox links, receive content privately, reply, and share branded image cards.
 
 ## Production architecture
 
@@ -24,10 +24,13 @@ Browser / installable PWA
 - email/password sign-up and sign-in
 - password recovery
 - Google OAuth client support
+- shareable conversation prompts and pre-filled prompt links
 - paginated private inbox with automatic refresh
 - replies and branded PNG answer cards
 - multi-select sharing as separate image files
-- sender blocking and message deletion
+- hidden-word filtering, link pausing, sender blocking, reports and message deletion
+- account-only and friend-only inbox modes
+- redesigned light/dark themes, compact inbox and reduced-motion preference
 - installable PWA
 - public Terms, Privacy, Safety, Features and About pages
 

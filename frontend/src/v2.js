@@ -38,27 +38,32 @@ api = async function authenticatedApi(path, options = {}, timeoutMs = 35000) {
 
 function renderAuthTabs(mode = 'signup') {
   const signup = mode !== 'signin';
-  const googleEnabled = Boolean(picnymConfig().googleOAuthEnabled);
-  return `<section class="card auth-card">
-    <div class="auth-tabs" role="tablist">
-      <button class="auth-tab ${signup ? 'active' : ''}" type="button" data-auth-mode="signup">Create account</button>
-      <button class="auth-tab ${signup ? '' : 'active'}" type="button" data-auth-mode="signin">Sign in</button>
+  return `<section class="card auth-card" aria-labelledby="authTitle">
+    <div class="auth-intro">
+      <span class="auth-badge">Your private inbox</span>
+      <h2 id="authTitle">${signup ? 'Make your PICNYM.' : 'Good to see you again.'}</h2>
+      <p>${signup ? 'One account keeps your links, replies and safety controls together.' : 'Your inboxes are right where you left them.'}</p>
     </div>
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab ${signup ? 'active' : ''}" type="button" role="tab" aria-selected="${signup}" data-auth-mode="signup">Create account</button>
+      <button class="auth-tab ${signup ? '' : 'active'}" type="button" role="tab" aria-selected="${!signup}" data-auth-mode="signin">Sign in</button>
+    </div>
+    <button id="googleAuth" class="btn google-btn" type="button">
+      <span class="google-g" aria-hidden="true">G</span> Continue with Google
+    </button>
+    <div class="auth-or"><span>or use email</span></div>
     ${signup ? `<form id="signupForm">
       <div class="field"><label for="signupName">Display name</label><input id="signupName" name="displayName" maxlength="60" autocomplete="name" required></div>
       <div class="field"><label for="signupEmail">Email</label><input id="signupEmail" name="email" type="email" autocomplete="email" required></div>
       <div class="field"><label for="signupPassword">Password</label><input id="signupPassword" name="password" type="password" minlength="8" autocomplete="new-password" required></div>
-      <button class="btn primary" type="submit" style="width:100%">Create account</button>
+      <label class="eligibility-check"><input id="signupEligibility" name="eligibility" type="checkbox" required><span>I confirm I am 18 or older and accept the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</span></label>
+      <button class="btn primary auth-submit" type="submit">Create account</button>
     </form>` : `<form id="signinForm">
       <div class="field"><label for="signinEmail">Email</label><input id="signinEmail" name="email" type="email" autocomplete="email" required></div>
       <div class="field"><label for="signinPassword">Password</label><input id="signinPassword" name="password" type="password" autocomplete="current-password" required></div>
-      <button class="btn primary" type="submit" style="width:100%">Sign in</button>
+      <button class="btn primary auth-submit" type="submit">Sign in</button>
     </form>`}
-    <div class="auth-or"><span>or</span></div>
-    <button id="googleAuth" class="btn google-btn" type="button" style="width:100%" ${googleEnabled ? '' : 'disabled'}>
-      <span class="google-g">G</span> Continue with Google
-    </button>
-    ${googleEnabled ? '' : '<p class="form-note">Google OAuth is wired into V2 but disabled on this preview until the Google client credentials are added.</p>'}
+    <p class="auth-trust"><span aria-hidden="true">&#10003;</span> Anonymous to recipients. Account-protected for you.</p>
   </section>`;
 }
 
@@ -69,26 +74,55 @@ async function home(modeFromQuery) {
   const last = localStorage.getItem('phsfc_last_inbox');
   const defaultSaved = (last && saved.includes(last)) ? last : saved[0];
   const authMode = modeFromQuery || (new URLSearchParams(location.search).get('auth') === 'signin' ? 'signin' : 'signup');
-  const accountCard = session ? `<section class="card account-welcome">
-      <div class="account-row"><div><div class="label">Signed in as</div><strong>${esc(userDisplayName(session.user))}</strong><div class="form-note">${esc(session.user.email || '')}</div></div><a class="btn small" href="/account">Account</a></div>
+  const accountCard = session ? `<section class="card account-welcome creator-card">
+      <div class="account-row"><div><div class="label">Your creator space</div><strong>${esc(userDisplayName(session.user))}</strong><div class="form-note">${esc(session.user.email || '')}</div></div><a class="btn small" href="/account">Open account</a></div>
       <form id="createForm" style="margin-top:20px">
         <div class="field"><label for="displayName">Name shown on your inbox</label><input id="displayName" name="displayName" maxlength="40" autocomplete="nickname" value="${esc(userDisplayName(session.user))}" required></div>
         <div class="field"><label for="handle">Your link</label><div class="slug-field"><span>/u/</span><input id="handle" name="handle" maxlength="28" autocapitalize="none" autocomplete="off" spellcheck="false" placeholder="your-name" required></div></div>
-        <button class="btn primary" type="submit" style="width:100%">Create anonymous link</button>
+        <button class="btn primary auth-submit" type="submit">Create anonymous link</button>
       </form>
-      ${defaultSaved ? `<button type="button" id="openSaved" class="btn" style="width:100%;margin-top:9px">Open saved inbox</button>` : ''}
+      ${defaultSaved ? `<button type="button" id="openSaved" class="btn saved-inbox-btn">Open saved inbox</button>` : ''}
     </section>` : renderAuthTabs(authMode);
 
-  app.innerHTML = `<main class="home v2-home"><section class="home-box wide-home">${brand()}
-    <div class="home-kicker">Anonymous messages · photos · voice notes · polls</div>
-    <h1>Say it anonymously.<br>Share more than text.</h1>
-    <p>Create your inbox, share one link, and receive anonymous messages in more formats.</p>
-    ${accountCard}
-    <nav class="marketing-links" aria-label="PICNYM information">
-      <a href="/features">Features</a><a href="/safety">Safety</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/about">About</a>
-    </nav>
-    <footer class="product-footer">Designed &amp; built by <a href="https://www.gojodev.name.ng/" target="_blank" rel="noopener">Owojuyigbe Oluwajomiloju · GOJO.DEV</a></footer>
-  </section></main>`;
+  app.innerHTML = `<main class="home v2-home market-home">
+    <header class="market-nav">
+      ${brand()}
+      <nav aria-label="Primary navigation"><a href="/features">Features</a><a href="/safety">Safety</a>${session ? '<a href="/account">Account</a>' : '<a class="nav-cta" href="/?auth=signin">Sign in</a>'}</nav>
+    </header>
+    <section class="market-hero">
+      <div class="hero-copy">
+        <div class="home-kicker"><span></span> Text · photos · voice · polls</div>
+        <h1>Say what you mean.<br><em>Keep your name out of it.</em></h1>
+        <p class="hero-lede">PICNYM gives you one link for honest messages and enough control to keep the experience yours.</p>
+        <div class="hero-points"><span>Receiver-controlled</span><span>Built-in safety</span><span>No paid identity reveals</span></div>
+        <div class="message-stack" aria-label="Example PICNYM conversation">
+          <article class="stack-card stack-question"><span>ANONYMOUS</span><strong>What is one thing I should never change?</strong><small>Just now · text</small></article>
+          <article class="stack-card stack-reply"><span>YOUR REPLY</span><strong>Your energy. It makes people feel included.</strong><small>Ready to share</small></article>
+          <div class="stack-types"><span>TXT</span><span>PHOTO</span><span>VOICE</span><span>POLL</span></div>
+        </div>
+      </div>
+      <div class="hero-panel">${accountCard}</div>
+    </section>
+    <section class="format-strip" aria-label="PICNYM formats"><span>ONE LINK</span><b>Four ways to answer.</b><div><i>01</i> Text</div><div><i>02</i> Photo</div><div><i>03</i> Voice</div><div><i>04</i> Poll</div></section>
+    <section class="market-section feature-mosaic">
+      <div class="section-heading"><span>Made for real conversations</span><h2>More signal. Less social noise.</h2></div>
+      <div class="mosaic-grid">
+        <article class="mosaic-card coral"><span>Prompt deck</span><h3>Never stare at an empty message box.</h3><p>Conversation starters turn one shared link into something people actually want to answer.</p></article>
+        <article class="mosaic-card ink"><span>Private inbox</span><h3>You decide what becomes public.</h3><p>Messages stay with you unless you reply and deliberately publish an answer.</p></article>
+        <article class="mosaic-card mint"><span>Creator controls</span><h3>Pause, filter, restrict.</h3><p>Hidden words, account-only mode, friend-only mode and sender blocking are built in.</p></article>
+        <article class="mosaic-card paper"><span>Share kit</span><h3>Replies that look ready to post.</h3><p>Turn answers into branded cards and share them as images without exposing the sender.</p></article>
+      </div>
+    </section>
+    <section class="safety-banner">
+      <div><span>CONTROL BEFORE CURIOSITY</span><h2>Anonymous does not mean uncontrolled.</h2><p>Block a sender, report a message, hide words or pause your link whenever you need space.</p></div>
+      <a class="btn safety-btn" href="/safety">See the safety center</a>
+    </section>
+    <footer class="market-footer">
+      ${brand()}
+      <nav class="market-footer-links" aria-label="PICNYM information"><a href="/features">Features</a><a href="/safety">Safety</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/about">About</a></nav>
+      <p>Designed &amp; built by <a href="https://www.gojodev.name.ng/" target="_blank" rel="noopener">Owojuyigbe Oluwajomiloju · GOJO.DEV</a></p>
+    </footer>
+  </main>`;
 
   $$('.auth-tab').forEach((button) => button.onclick = () => {
     const next = button.dataset.authMode === 'signin' ? 'signin' : 'signup';
@@ -105,6 +139,7 @@ async function home(modeFromQuery) {
       const displayName = String(form.get('displayName') || '').trim();
       const email = String(form.get('email') || '').trim();
       const password = String(form.get('password') || '');
+      if (!form.has('eligibility')) throw new Error('Confirm your age and accept the Terms to continue.');
       if (password.length < 8) throw new Error('Use at least 8 characters for your password.');
       const result = await PicnymAuth.signUp({ email, password, displayName });
       if (result.session) {
@@ -134,7 +169,10 @@ async function home(modeFromQuery) {
   });
 
   $('#googleAuth')?.addEventListener('click', async () => {
-    try { await PicnymAuth.signInWithGoogle(); }
+    try {
+      if (authMode !== 'signin' && !$('#signupEligibility')?.checked) throw new Error('Confirm your age and accept the Terms before creating an account.');
+      await PicnymAuth.signInWithGoogle();
+    }
     catch (error) { toast(error.message); }
   });
 
@@ -421,9 +459,9 @@ if (legacyMessageCardBlob) {
     else {
       const url = URL.createObjectURL(baseBlob); const img = await new Promise((resolve, reject) => { const el = new Image(); el.onload = () => resolve(el); el.onerror = reject; el.src = url; }); ctx.drawImage(img, 0, 0); URL.revokeObjectURL(url);
     }
-    ctx.fillStyle = '#12264b'; ctx.fillRect(0, 0, 1080, 155); ctx.fillStyle = '#b9c9b2'; ctx.fillRect(0, 155, 1080, 14);
+    ctx.fillStyle = '#4c56e8'; ctx.fillRect(0, 0, 1080, 155); ctx.fillStyle = '#ff6d59'; ctx.fillRect(0, 155, 1080, 14);
     ctx.fillStyle = '#fff'; ctx.font = '800 48px Arial'; ctx.fillText('PICNYM', 70, 83); ctx.font = '700 20px Arial'; ctx.fillText('ANONYMOUS', 70, 119);
-    ctx.fillStyle = '#f1f2ed'; ctx.fillRect(55, 1195, 970, 105); ctx.fillStyle = '#747a80'; ctx.font = '700 21px Arial'; ctx.fillText(currentHostLabel(), 70, 1260);
+    ctx.fillStyle = '#f7f7fb'; ctx.fillRect(55, 1195, 970, 105); ctx.fillStyle = '#676a7d'; ctx.font = '700 21px Arial'; ctx.fillText(currentHostLabel(), 70, 1260);
     ctx.textAlign = 'right'; ctx.fillText(inbox?.displayName ? `@${String(inbox.displayName).slice(0, 28)}` : PICNYM, 1010, 1260); ctx.textAlign = 'left';
     return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob || baseBlob), 'image/png'));
   };
@@ -439,12 +477,12 @@ if (legacyShareImageFiles) {
 cardImage = async function cardImage(message, inbox) {
   const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 1350;
   const ctx = canvas.getContext('2d'); if (!ctx) throw new Error('Your browser cannot create the answer card.');
-  ctx.fillStyle = '#f1f2ed'; ctx.fillRect(0, 0, 1080, 1350); ctx.fillStyle = '#12264b'; ctx.fillRect(0, 0, 1080, 155); ctx.fillStyle = '#b9c9b2'; ctx.fillRect(0, 155, 1080, 14);
+  ctx.fillStyle = '#f7f7fb'; ctx.fillRect(0, 0, 1080, 1350); ctx.fillStyle = '#4c56e8'; ctx.fillRect(0, 0, 1080, 155); ctx.fillStyle = '#ff6d59'; ctx.fillRect(0, 155, 1080, 14);
   ctx.fillStyle = '#fff'; ctx.font = '800 48px Arial'; ctx.fillText('PICNYM', 70, 83); ctx.font = '700 20px Arial'; ctx.fillText('ANONYMOUS', 70, 119);
-  ctx.fillStyle = '#fffefa'; ctx.beginPath(); roundedRect(ctx, 65, 230, 950, 440, 28); ctx.fill(); ctx.fillStyle = '#71816f'; ctx.font = '800 24px Arial'; ctx.fillText('ANONYMOUS', 105, 290);
-  ctx.fillStyle = '#151b26'; ctx.font = '700 38px Arial'; wrapText(ctx, message.poll?.question || message.text || (message.voiceUrl ? 'Voice note' : message.imageUrl ? 'Image message' : 'Anonymous message'), 105, 360, 860, 52);
-  ctx.fillStyle = '#dfe9dc'; ctx.beginPath(); roundedRect(ctx, 65, 745, 950, 430, 28); ctx.fill(); ctx.fillStyle = '#526a56'; ctx.font = '800 23px Arial'; ctx.fillText(`${String(inbox.displayName || 'YOU').toUpperCase()} REPLIED`, 105, 815);
-  ctx.fillStyle = '#151b26'; ctx.font = '700 38px Arial'; wrapText(ctx, message.reply, 105, 885, 860, 52); ctx.fillStyle = '#747a80'; ctx.font = '700 22px Arial'; ctx.fillText(currentHostLabel(), 70, 1270);
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); roundedRect(ctx, 65, 230, 950, 440, 28); ctx.fill(); ctx.fillStyle = '#4c56e8'; ctx.font = '800 24px Arial'; ctx.fillText('ANONYMOUS', 105, 290);
+  ctx.fillStyle = '#17182b'; ctx.font = '700 38px Arial'; wrapText(ctx, message.poll?.question || message.text || (message.voiceUrl ? 'Voice note' : message.imageUrl ? 'Image message' : 'Anonymous message'), 105, 360, 860, 52);
+  ctx.fillStyle = '#e9fbf8'; ctx.beginPath(); roundedRect(ctx, 65, 745, 950, 430, 28); ctx.fill(); ctx.fillStyle = '#21665d'; ctx.font = '800 23px Arial'; ctx.fillText(`${String(inbox.displayName || 'YOU').toUpperCase()} REPLIED`, 105, 815);
+  ctx.fillStyle = '#17182b'; ctx.font = '700 38px Arial'; wrapText(ctx, message.reply, 105, 885, 860, 52); ctx.fillStyle = '#676a7d'; ctx.font = '700 22px Arial'; ctx.fillText(currentHostLabel(), 70, 1270);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png')); if (!blob) throw new Error('Could not create the answer card.');
   return shareImageFiles([new File([blob], 'picnym-answer.png', { type: 'image/png' })], PICNYM);
 };
@@ -453,8 +491,8 @@ function injectPicnymStyles() {
   if ($('#picnymV2Styles')) return;
   const style = document.createElement('style'); style.id = 'picnymV2Styles';
   style.textContent = `
-    .wide-home{width:min(540px,100%)}.home-kicker{text-align:center;color:#71816f;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:850;margin-bottom:14px}.v2-home .home-box>.brand{margin-bottom:25px}
-    .auth-tabs{display:grid;grid-template-columns:1fr 1fr;background:#eceee8;border-radius:11px;padding:3px;margin-bottom:20px}.auth-tab{border:0;background:transparent;border-radius:9px;padding:12px;color:#777d81;font-weight:800;cursor:pointer}.auth-tab.active{background:#fff;color:#12264b;box-shadow:0 2px 5px #0001}.auth-or{display:flex;align-items:center;gap:12px;color:#999;font-size:12px;margin:16px 0}.auth-or:before,.auth-or:after{content:'';height:1px;background:#e1e3dd;flex:1}.google-btn{background:#fff;color:#202124}.google-g{display:inline-grid;place-items:center;margin-right:8px;font-weight:900}.form-note{font-size:12px;color:#7b817d;line-height:1.5;margin:8px 0 0}.marketing-links{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin:20px 0 12px}.marketing-links a,.product-footer a,.public-legal a{color:#526a56;font-weight:750;text-decoration:none}.product-footer{text-align:center;color:#8a8e8a;font-size:11px;line-height:1.5}.account-row,.account-inbox{display:flex;justify-content:space-between;align-items:center;gap:14px}.account-welcome strong,.account-inbox strong{color:#12264b;font-size:18px}.account-list{display:grid;gap:12px}.account-list .card{margin-bottom:0}.compact-kicker{margin-top:30px;margin-bottom:12px}.slug-field{display:flex;align-items:center;border:1px solid #d8dad4;border-radius:12px;background:#fff;overflow:hidden}.slug-field span{padding:0 0 0 14px;color:#8a8f8b;font-weight:700}.slug-field input{border:0!important;box-shadow:none!important}.public-legal{text-align:center;color:#8a8e8a;font-size:11px;padding:0 10px 24px}
+    .wide-home{width:min(540px,100%)}.v2-home .home-box>.brand{margin-bottom:25px}
+    .auth-tabs{display:grid;grid-template-columns:1fr 1fr}.auth-tab{border:0;background:transparent;border-radius:10px;padding:12px;color:var(--muted);font-weight:850;cursor:pointer}.auth-tab.active{background:var(--card);color:var(--brand);box-shadow:0 2px 7px #20244914}.google-g{display:inline-grid;place-items:center;margin-right:8px;font-weight:950}.form-note{font-size:12px;color:var(--muted);line-height:1.5;margin:8px 0 0}.marketing-links{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin:20px 0 12px}.product-footer{text-align:center;color:var(--muted);font-size:11px;line-height:1.5}.account-row,.account-inbox{display:flex;justify-content:space-between;align-items:center;gap:14px}.account-welcome strong,.account-inbox strong{color:var(--ink);font-size:18px}.account-list{display:grid;gap:12px}.account-list .card{margin-bottom:0}.compact-kicker{margin-top:30px;margin-bottom:12px}.public-legal{text-align:center;color:var(--muted);font-size:11px;padding:0 10px 24px}
     @media(max-width:560px){.account-row,.account-inbox{align-items:flex-start}.account-inbox{flex-direction:column}.account-inbox .btn{width:100%}}
   `;
   document.head.appendChild(style);

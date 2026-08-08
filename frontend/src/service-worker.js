@@ -1,6 +1,6 @@
-const CACHE_NAME = 'picnym-shell-v4';
+const CACHE_NAME = 'picnym-shell-v5-market';
 const APP_SHELL = [
-  '/', '/index.html', '/style.css', '/pro.css', '/theme.js', '/config.js', '/auth.js',
+  '/', '/index.html', '/style.css', '/pro.css', '/market.css', '/theme.js', '/config.js', '/auth.js',
   '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js', '/v2.js', '/auth-ui.js', '/dashboard-v2.js', '/pro.js',
   '/info.css', '/features.html', '/about.html', '/privacy.html', '/terms.html', '/safety.html',
   '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'

@@ -3,6 +3,22 @@
   let accountCache = null;
   let friendCache = null;
   let dashboardFilter = { query: '', kind: 'all', favoritesOnly: false, showArchived: false };
+  const PROMPTS = [
+    'What is something I do that people remember?',
+    'What should I do more often?',
+    'What is your first impression of me?',
+    'Tell me an opinion you think I need to hear.',
+    'What is one thing you have always wanted to ask me?',
+    'Pick my next profile photo: bold, calm or funny?'
+  ];
+  const interfacePreference = (key) => localStorage.getItem(`picnym-${key}`) === 'true';
+
+  function applyInterfacePreferences() {
+    document.documentElement.dataset.compact = String(interfacePreference('compact'));
+    document.documentElement.dataset.motion = interfacePreference('reduced-motion') ? 'reduced' : 'full';
+  }
+
+  applyInterfacePreferences();
 
   const avatar = (profile, size = 'md') => profile?.avatarUrl
     ? `<img class="profile-avatar ${size}" src="${esc(profile.avatarUrl)}" alt="${esc(profile.displayName || profile.username || 'Profile')} profile picture" loading="lazy">`
@@ -111,7 +127,7 @@
 
   function settingsSection(data) {
     const s = data.settings || {};
-    return `<section class="settings-grid"><article class="card"><div class="section-kicker compact">Appearance</div><h2>Theme</h2><div class="theme-choice" role="group" aria-label="Theme preference"><button class="theme-option ${s.theme === 'system' ? 'active' : ''}" data-theme-value="system" type="button">System</button><button class="theme-option ${s.theme === 'light' ? 'active' : ''}" data-theme-value="light" type="button">Light</button><button class="theme-option ${s.theme === 'dark' ? 'active' : ''}" data-theme-value="dark" type="button">Dark</button></div><p class="form-note">The floating ☾ / ☀ button gives you a quick dedicated light/dark toggle anywhere in PICNYM.</p></article><article class="card"><div class="section-kicker compact">Privacy</div><h2>Profile controls</h2><form id="privacySettingsForm">${switchControl('discoverable','Discoverable profile','Allow people to find you by PICNYM username.',s.discoverable)}${switchControl('allowFriendRequests','Friend requests','Let other PICNYM users send you friend requests.',s.allowFriendRequests)}${switchControl('showActivity','Activity status','Show friends when you are currently active.',s.showActivity)}${switchControl('browserNotifications','In-app browser notifications','Notify you about new messages while PICNYM is open.',s.browserNotifications)}<button class="btn primary" type="submit">Save settings</button></form></article><article class="card danger-zone"><div class="section-kicker compact">Data & account</div><h2>Account controls</h2><p class="form-note">Export a snapshot of your account settings, or permanently delete your PICNYM account and every inbox it owns.</p><div class="inline-actions"><button id="exportAccount" class="btn" type="button">Export account JSON</button><button id="deleteAccount" class="btn danger-btn" type="button">Delete account</button></div></article></section>`;
+    return `<section class="settings-grid"><article class="card"><div class="section-kicker compact">Appearance</div><h2>Theme</h2><div class="theme-choice" role="group" aria-label="Theme preference"><button class="theme-option ${s.theme === 'system' ? 'active' : ''}" data-theme-value="system" type="button">System</button><button class="theme-option ${s.theme === 'light' ? 'active' : ''}" data-theme-value="light" type="button">Light</button><button class="theme-option ${s.theme === 'dark' ? 'active' : ''}" data-theme-value="dark" type="button">Dark</button></div><p class="form-note">The floating ☾ / ☀ button gives you a quick dedicated light/dark toggle anywhere in PICNYM.</p></article><article class="card"><div class="section-kicker compact">Interface</div><h2>Make it yours</h2><form id="interfaceSettingsForm">${switchControl('compact','Compact inbox','Fit more messages on screen with tighter cards.',interfacePreference('compact'))}${switchControl('reducedMotion','Reduce motion','Limit transitions and non-essential animation.',interfacePreference('reduced-motion'))}<button class="btn primary" type="submit">Save interface</button></form></article><article class="card"><div class="section-kicker compact">Privacy</div><h2>Profile controls</h2><form id="privacySettingsForm">${switchControl('discoverable','Discoverable profile','Allow people to find you by PICNYM username.',s.discoverable)}${switchControl('allowFriendRequests','Friend requests','Let other PICNYM users send you friend requests.',s.allowFriendRequests)}${switchControl('showActivity','Activity status','Show friends when you are currently active.',s.showActivity)}${switchControl('browserNotifications','In-app browser notifications','Notify you about new messages while PICNYM is open.',s.browserNotifications)}<button class="btn primary" type="submit">Save settings</button></form></article><article class="card safety-settings-card"><div class="section-kicker compact">Help & safety</div><h2>Your control center</h2><p class="form-note">Review the rules, privacy choices and the steps for reporting or blocking unwanted messages.</p><div class="inline-actions"><a class="btn" href="/safety">Safety center</a><a class="btn" href="/privacy">Privacy</a><a class="btn" href="/terms">Terms</a></div></article><article class="card danger-zone"><div class="section-kicker compact">Data & account</div><h2>Account controls</h2><p class="form-note">Export a snapshot of your account settings, or permanently delete your PICNYM account and every inbox it owns.</p><div class="inline-actions"><button id="exportAccount" class="btn" type="button">Export account JSON</button><button id="deleteAccount" class="btn danger-btn" type="button">Delete account</button></div></article></section>`;
   }
 
   function billingSection(data) {
@@ -199,6 +215,14 @@
           const result = await api('/api/account/settings', { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ discoverable: form.has('discoverable'), allowFriendRequests: form.has('allowFriendRequests'), showActivity: form.has('showActivity'), browserNotifications }) });
           data.settings = result.settings; accountCache = { ...data, settings: result.settings }; toast('Settings saved.');
         } catch (error) { toast(error.message); }
+      });
+      document.getElementById('interfaceSettingsForm')?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        localStorage.setItem('picnym-compact', String(form.has('compact')));
+        localStorage.setItem('picnym-reduced-motion', String(form.has('reducedMotion')));
+        applyInterfacePreferences();
+        toast('Interface preferences saved.');
       });
       document.getElementById('exportAccount')?.addEventListener('click', () => exportJson(data));
       document.getElementById('deleteAccount')?.addEventListener('click', confirmAccountDelete);
@@ -325,6 +349,25 @@
       document.querySelectorAll('.tool').forEach((button) => { if (button.dataset.kind !== 'text' && kindAllowed[button.dataset.kind] === false) { button.disabled = true; button.title = 'Disabled by the inbox owner'; } });
       const session = await authSession();
       const form = document.getElementById('sendForm');
+      if (form && !document.querySelector('.prompt-deck')) {
+        const deck = document.createElement('div');
+        deck.className = 'prompt-deck';
+        deck.innerHTML = `<strong>Need a starting point?</strong><div class="prompt-chips">${PROMPTS.map((prompt) => `<button class="prompt-chip" type="button" data-prompt="${esc(prompt)}">${esc(prompt)}</button>`).join('')}</div>`;
+        form.before(deck);
+        const usePrompt = (prompt) => {
+          document.querySelector('.tool[data-kind="text"]')?.click();
+          requestAnimationFrame(() => {
+            const input = document.querySelector('#sendForm textarea[name="text"]');
+            if (!input) return;
+            input.value = prompt;
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+          });
+        };
+        deck.querySelectorAll('[data-prompt]').forEach((button) => button.addEventListener('click', () => usePrompt(button.dataset.prompt)));
+        const requestedPrompt = new URLSearchParams(location.search).get('prompt');
+        if (requestedPrompt && requestedPrompt.length <= 180) usePrompt(requestedPrompt);
+      }
       if (form && session) form.insertAdjacentHTML('beforeend', '<label class="reveal-profile-option"><input type="checkbox" name="revealProfile" value="1"><span><strong>Reveal my PICNYM profile with this message</strong><small>Optional. Leave off to stay anonymous.</small></span></label>');
       if (form && settings.paused) form.querySelectorAll('button,input,textarea').forEach((element) => element.disabled = true);
       if (form && !session && (settings.registeredOnly || settings.friendsOnly)) {
@@ -401,12 +444,27 @@
   }
 
   const baseDashboard = dashboard;
+  function openPromptShare(inbox) {
+    if (!inbox?.slug) return;
+    const box = modal(`<div class="section-kicker compact">Prompt deck</div><h2>Share a question</h2><p class="form-note">Choose a conversation starter. The question opens pre-filled, and the sender can still edit it.</p><div class="prompt-share-list">${PROMPTS.map((prompt) => `<button class="prompt-share-option" type="button" data-prompt="${esc(prompt)}"><span>${esc(prompt)}</span><b>Share</b></button>`).join('')}</div><div class="modal-actions"><button class="btn" type="button" data-close>Close</button></div>`);
+    $('[data-close]', box).onclick = () => box.remove();
+    box.querySelectorAll('[data-prompt]').forEach((button) => button.onclick = async () => {
+      const prompt = button.dataset.prompt;
+      const url = `${location.origin}/u/${encodeURIComponent(inbox.slug)}?prompt=${encodeURIComponent(prompt)}`;
+      await share({ title: `${prompt} — PICNYM`, text: prompt, url }, url);
+    });
+  }
+
   dashboard = async function professionalDashboard(slug, active = 'inbox') {
     await baseDashboard(slug, active);
     const actions = document.querySelector('.link-actions');
     if (actions && !document.getElementById('dashboardSettings')) {
       const button = document.createElement('button'); button.id = 'dashboardSettings'; button.className = 'btn'; button.type = 'button'; button.textContent = 'Inbox settings'; actions.prepend(button);
       button.onclick = () => openInboxSettings(picnymDashboardState?.inbox);
+    }
+    if (actions && !document.getElementById('sharePromptButton')) {
+      const button = document.createElement('button'); button.id = 'sharePromptButton'; button.className = 'btn sage'; button.type = 'button'; button.textContent = 'Share a prompt'; actions.prepend(button);
+      button.onclick = () => openPromptShare(picnymDashboardState?.inbox);
     }
     ensureThemeToggle();
   };
