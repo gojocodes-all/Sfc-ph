@@ -1,11 +1,11 @@
 {
   "name": "picnym-frontend",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "check": "node --check build.mjs && node --check src/v2.js && node --check src/dashboard-v2.js"
+    "check": "node --check build.mjs && node --check src/app1.js && node --check src/app2.js && node --check src/app3.js && node --check src/app4.js && node --check src/app5.js && node --check src/v2.js && node --check src/auth-ui.js && node --check src/dashboard-v2.js && node --check src/service-worker.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0"
