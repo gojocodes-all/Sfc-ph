@@ -1,18 +1,12 @@
 const picnymBaseHome = home;
 const picnymBaseRoute = route;
 
-async function syncGoogleAuthButton() {
+function syncGoogleAuthButton() {
   const button = $('#googleAuth');
   if (!button) return;
   const note = button.parentElement?.querySelector('.form-note');
-  const enabled = await PicnymAuth.isGoogleEnabled().catch(() => false);
-  if (!document.body.contains(button)) return;
-  button.disabled = !enabled;
-  if (note) {
-    note.textContent = enabled
-      ? 'Use your Google account to continue.'
-      : 'Google sign-in will appear here once the provider is enabled.';
-  }
+  button.disabled = false;
+  if (note) note.textContent = 'Use your Google account to continue.';
 }
 
 function addLegacyInboxShortcut() {
@@ -67,7 +61,7 @@ function addForgotPasswordLink() {
 async function enhanceAuthHome() {
   addForgotPasswordLink();
   addLegacyInboxShortcut();
-  await syncGoogleAuthButton();
+  syncGoogleAuthButton();
 }
 
 home = async function homeWithAuthEnhancements(...args) {
