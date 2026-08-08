@@ -39,7 +39,7 @@ jobs:
           grep -q "PICNYM" dist/index.html
           grep -q "picnym-api" dist/config.js
           grep -q "anonymous.gojodev.name.ng" dist/sitemap.xml
-          ! grep -R "PH X SFC" dist/index.html dist/v2.js dist/auth-ui.js
+          ! grep -R "PH X SFC" dist/index.html dist/app5.js dist/auth-ui.js
 
   edge-function:
     runs-on: ubuntu-latest
