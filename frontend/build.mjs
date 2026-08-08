@@ -6,7 +6,7 @@ import { build } from 'esbuild';
 const root = resolve(fileURLToPath(new URL('.', import.meta.url)));
 const src = resolve(root, 'src');
 const dist = resolve(root, 'dist');
-const fallbackApi = 'https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api';
+const fallbackApi = 'https://ahvusnmuyfvdzjmdkgzj.supabase.co/functions/v1/picnym-api-v4';
 const fallbackSupabaseUrl = 'https://ahvusnmuyfvdzjmdkgzj.supabase.co';
 const fallbackPublishableKey = 'sb_publishable_JODLl_4Ue29jwz2w8hSSSw_UO4l5OJZ';
 const fallbackSiteUrl = 'https://anonymous.gojodev.name.ng';

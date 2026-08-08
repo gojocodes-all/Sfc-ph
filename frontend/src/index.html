@@ -31,13 +31,15 @@
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
+  <script src="/theme.js"></script>
   <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/pro.css" />
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@graph":[
       {"@type":"WebSite","name":"PICNYM","url":"https://anonymous.gojodev.name.ng/","description":"Anonymous messages, photos, voice notes and polls through one shareable link.","inLanguage":"en-NG"},
-      {"@type":"SoftwareApplication","name":"PICNYM","applicationCategory":"SocialNetworkingApplication","operatingSystem":"Web, Android, iOS","url":"https://anonymous.gojodev.name.ng/","description":"Create an anonymous inbox and receive text messages, photos, voice notes and polls.","offers":{"@type":"Offer","price":"0","priceCurrency":"NGN"},"creator":{"@type":"Person","name":"Owojuyigbe Oluwajomiloju","url":"https://www.gojodev.name.ng/"}}
+      {"@type":"SoftwareApplication","name":"PICNYM","applicationCategory":"SocialNetworkingApplication","operatingSystem":"Web, Android, iOS","url":"https://anonymous.gojodev.name.ng/","description":"Create an anonymous inbox and receive text messages, photos, voice notes and polls.","offers":[{"@type":"Offer","name":"PICNYM Free","price":"0","priceCurrency":"NGN"},{"@type":"Offer","name":"PICNYM Premium","price":"500","priceCurrency":"NGN","description":"Premium creator and organization tools. Billing activation coming soon."}],"creator":{"@type":"Person","name":"Owojuyigbe Oluwajomiloju","url":"https://www.gojodev.name.ng/"}}
     ]
   }
   </script>
@@ -62,5 +64,6 @@
   <script src="/v2.js"></script>
   <script src="/auth-ui.js"></script>
   <script src="/dashboard-v2.js"></script>
+  <script src="/pro.js"></script>
 </body>
 </html>
