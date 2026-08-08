@@ -6,6 +6,7 @@
     { "source": "/u/:path*", "destination": "/" },
     { "source": "/dashboard/:path*", "destination": "/" },
     { "source": "/poll/:path*", "destination": "/" },
+    { "source": "/profile/:path*", "destination": "/" },
     { "source": "/account", "destination": "/" },
     { "source": "/reset-password", "destination": "/" },
     { "source": "/features", "destination": "/features.html" },
@@ -42,6 +43,10 @@
     },
     {
       "source": "/poll/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow, noarchive" }]
+    },
+    {
+      "source": "/profile/(.*)",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow, noarchive" }]
     }
   ]
