@@ -7,6 +7,7 @@
     { "source": "/dashboard/:path*", "destination": "/index.html" },
     { "source": "/poll/:path*", "destination": "/index.html" },
     { "source": "/account", "destination": "/index.html" },
+    { "source": "/reset-password", "destination": "/index.html" },
     { "source": "/features", "destination": "/features.html" },
     { "source": "/about", "destination": "/about.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
@@ -29,6 +30,10 @@
     },
     {
       "source": "/account",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/reset-password",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
     },
     {
