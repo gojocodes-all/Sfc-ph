@@ -69,9 +69,6 @@ async function isGoogleEnabled({ refresh = false } = {}) {
 }
 
 async function signInWithGoogle() {
-  if (!await isGoogleEnabled({ refresh: true })) {
-    throw new Error('Google sign-in is not enabled yet. Use email and password for now.');
-  }
   const { data, error } = await client.auth.signInWithOAuth({
     provider: 'google',
     options: {
