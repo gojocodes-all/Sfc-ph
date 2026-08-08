@@ -59,7 +59,7 @@ async function messageCardBlob(message, inbox) {
   ctx.fillRect(0, 155, 1080, 14);
   ctx.fillStyle = '#ffffff';
   ctx.font = '800 44px Arial';
-  ctx.fillText('PH X SFC', 70, 80);
+  ctx.fillText('PICNYM', 70, 80);
   ctx.font = '700 20px Arial';
   ctx.fillText('ANONYMOUS', 70, 116);
 
@@ -123,7 +123,7 @@ async function messageCardBlob(message, inbox) {
   ctx.font = '700 21px Arial';
   ctx.fillText('anonymous.gojodev.name.ng', 70, 1260);
   ctx.textAlign = 'right';
-  ctx.fillText(inbox?.displayName ? `@${String(inbox.displayName).slice(0, 28)}` : 'PH X SFC', 1010, 1260);
+  ctx.fillText(inbox?.displayName ? `@${String(inbox.displayName).slice(0, 28)}` : 'PICNYM', 1010, 1260);
   ctx.textAlign = 'left';
 
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
@@ -137,7 +137,7 @@ async function messageCardFile(message, inbox, index = 1) {
   return new File([blob], `anonymous-message-${safeIndex}.png`, { type: 'image/png' });
 }
 
-async function shareImageFiles(files, title = 'PH X SFC ANONYMOUS') {
+async function shareImageFiles(files, title = 'PICNYM') {
   if (!files?.length) throw new Error('There is nothing to share.');
   if (navigator.share && navigator.canShare?.({ files })) {
     return navigator.share({ files, title });
@@ -166,7 +166,7 @@ async function cardImage(message, inbox) {
   ctx.fillStyle = '#f1f2ed'; ctx.fillRect(0, 0, 1080, 1350);
   ctx.fillStyle = '#12264b'; ctx.fillRect(0, 0, 1080, 155);
   ctx.fillStyle = '#b9c9b2'; ctx.fillRect(0, 155, 1080, 14);
-  ctx.fillStyle = 'white'; ctx.font = '800 44px Arial'; ctx.fillText('PH X SFC', 70, 80);
+  ctx.fillStyle = 'white'; ctx.font = '800 44px Arial'; ctx.fillText('PICNYM', 70, 80);
   ctx.font = '700 20px Arial'; ctx.fillText('ANONYMOUS', 70, 116);
   ctx.fillStyle = '#fffefa'; ctx.beginPath(); roundedRect(ctx, 65, 230, 950, 440, 28); ctx.fill();
   ctx.fillStyle = '#71816f'; ctx.font = '800 24px Arial'; ctx.fillText('ANONYMOUS', 105, 290);
@@ -175,11 +175,11 @@ async function cardImage(message, inbox) {
   ctx.fillStyle = '#dfe9dc'; ctx.beginPath(); roundedRect(ctx, 65, 745, 950, 430, 28); ctx.fill();
   ctx.fillStyle = '#526a56'; ctx.font = '800 23px Arial'; ctx.fillText(`${inbox.displayName.toUpperCase()} REPLIED`, 105, 815);
   ctx.fillStyle = '#151b26'; ctx.font = '700 38px Arial'; wrapText(ctx, message.reply, 105, 885, 860, 52);
-  ctx.fillStyle = '#747a80'; ctx.font = '700 22px Arial'; ctx.fillText('PH X SFC ANONYMOUS', 70, 1270);
+  ctx.fillStyle = '#747a80'; ctx.font = '700 22px Arial'; ctx.fillText('PICNYM', 70, 1270);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('Could not create the answer card.');
   const file = new File([blob], 'ph-sfc-answer.png', { type: 'image/png' });
-  return shareImageFiles([file], 'PH X SFC ANONYMOUS');
+  return shareImageFiles([file], 'PICNYM');
 }
 
 async function renderPolls(inbox, token, options = {}) {
@@ -301,7 +301,7 @@ function initPWA() {
   window.addEventListener('appinstalled', () => {
     deferredInstallPrompt = null;
     syncInstallButton();
-    toast('PH X SFC installed.');
+    toast('PICNYM installed.');
   });
   syncInstallButton();
 }
@@ -335,4 +335,3 @@ function route() {
 
 injectEnhancementStyles();
 initPWA();
-route();

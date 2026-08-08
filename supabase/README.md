@@ -1,11 +1,7 @@
-# Supabase backend
+# PICNYM Supabase backend
 
-Production project: `ahvusnmuyfvdzjmdkgzj`
+Canonical backend: `functions/picnym-api/`.
 
-- API Edge Function: `phx-api`
-- Legacy/canonical redirect UI function: `phx`
-- Storage bucket: `phx-media`
-- Core tables: `inboxes`, `messages`, `blocks`, `polls`, `poll_options`, `votes`
-- Supporting moderation table: `reports`
+It handles account-aware inbox ownership, legacy owner-token compatibility, anonymous text/photo/voice/poll submission, paginated owner dashboards, replies, blocking, deletion and poll voting.
 
-The browser uses `phx-api` directly. Database tables have RLS enabled and no anonymous table policies; the Edge Function is the application boundary and uses the service role internally.
+Database migrations live in `migrations/`. Media remains in the `phx-media` bucket for backward compatibility with existing uploads.

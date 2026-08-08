@@ -1,76 +1,55 @@
 # PICNYM
 
-PICNYM is an anonymous messaging web app for text, photos, voice notes and polls. Users create one shareable inbox link, receive anonymous content, reply from a private dashboard and turn messages into branded shareable image cards.
+PICNYM is a multimedia anonymous messaging product for text, photos, voice notes and polls. Users create an account, make one or more anonymous inbox links, receive content privately, reply, and share branded image cards.
 
-> PICNYM V2 is currently developed on `v2/picnym-product`. The existing production release remains live while V2 is tested.
-
-## Features
-
-- anonymous text messages
-- anonymous image messages with optional captions
-- browser voice recording and audio-file uploads
-- anonymous polls and duplicate-vote protection
-- private inbox dashboard with automatic refresh
-- replies and shareable PNG answer cards
-- multi-select message sharing as separate image files
-- sender blocking and message deletion
-- installable PWA
-- email/password accounts with portable inbox ownership
-- legacy inbox claiming for pre-account users
-- Google OAuth client flow, enabled when provider credentials are configured
-- crawlable product, feature, safety, privacy, terms and about pages
-
-## Architecture
+## Production architecture
 
 ```text
-Browser / PWA
-    │
-    ├── Supabase Auth
-    │     ├── email + password
-    │     └── Google OAuth (provider credentials required)
-    │
+Browser / installable PWA
+    ├── Vercel static frontend
+    ├── Supabase Auth (email/password + Google OAuth when enabled)
     └── Supabase Edge Function `picnym-api`
           ├── PostgreSQL
           └── `phx-media` Storage
 ```
 
-The API keeps public anonymous-sending routes separate from protected account/inbox-owner routes. Protected routes accept a signed-in Supabase JWT or a legacy owner token where migration compatibility is required.
+`main` is the only release branch and source of truth.
 
-## Reliability and scale work in V2
+## Product features
 
-- inbox message pagination, default 40 and capped at 80 per request
-- batched poll/options/vote loading instead of per-message N+1 queries
-- ownership lookup index prepared for rollout
-- public/private cache separation
-- visible-tab-only dashboard polling with interaction pauses
-- upload size limits and MIME validation
-- voice recording waits for `MediaRecorder` finalization before upload
-- voice MIME parameters are normalized for mobile-browser compatibility
-- CI builds the frontend, validates SEO output, type-checks the Edge Function and smoke-tests the deployed V2 API
+- anonymous text, photo and voice-note messages
+- anonymous polls with duplicate-vote protection
+- account-based inbox ownership across devices
+- legacy inbox claiming for pre-account users
+- email/password sign-up and sign-in
+- password recovery
+- Google OAuth client support
+- paginated private inbox with automatic refresh
+- replies and branded PNG answer cards
+- multi-select sharing as separate image files
+- sender blocking and message deletion
+- installable PWA
+- public Terms, Privacy, Safety, Features and About pages
+
+## Reliability and scale
+
+- message pagination (40 default, 80 maximum per API request)
+- batched poll/options/vote queries instead of N+1 loading
+- indexed inbox ownership and message/poll lookup paths
+- CDN-served static frontend and short caching for safe public reads
+- jittered, visibility-aware dashboard refresh
+- 12 MB media limits, MIME validation and failed-upload cleanup
+- Android/mobile voice recording waits for MediaRecorder finalization before upload
+- CI syntax-checks/builds the frontend and type-checks/smoke-tests the API
 
 ## SEO
 
-Indexable product pages:
+Indexable pages: `/`, `/features`, `/about`, `/safety`, `/privacy`, `/terms`.
+Private/user-generated routes (`/account`, `/reset-password`, `/dashboard/*`, `/u/*`, `/poll/*`) are excluded from indexing.
+The build ships canonical tags, Open Graph/Twitter metadata, JSON-LD, `robots.txt` and `sitemap.xml`.
+Set `SITE_URL` during a build to move every canonical/site URL to a new domain without editing source files.
 
-- `/`
-- `/features`
-- `/about`
-- `/safety`
-- `/privacy`
-- `/terms`
-
-User-generated/private routes are deliberately excluded from search indexing:
-
-- `/u/*`
-- `/poll/*`
-- `/dashboard/*`
-- `/account`
-
-The frontend includes canonical metadata, Open Graph/Twitter metadata, JSON-LD, `robots.txt` and `sitemap.xml`.
-
-## Local frontend development
-
-Requirements: Node.js 20+
+## Frontend
 
 ```bash
 cd frontend
@@ -79,28 +58,13 @@ npm run check
 npm run build
 ```
 
-Production output is generated in `frontend/dist`.
-
-### Optional build environment variables
-
-- `API_BASE_URL`
-- `SUPABASE_URL`
-- `SUPABASE_PUBLISHABLE_KEY`
-- `SITE_URL`
-- `SUPPORT_PHONE`
-- `GOOGLE_OAUTH_ENABLED=true|false`
+Optional build variables: `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SITE_URL`, `SUPPORT_PHONE`.
 
 ## Supabase
 
-V2 API source:
-
-`supabase/functions/picnym-api/index.ts`
-
-The current production API is kept separately during migration. Core application tables use Row Level Security with no direct public table policies; the Edge Function uses server-side service-role access and applies application authorization itself.
-
-## Legal and safety
-
-PICNYM includes public Terms, Privacy and Safety pages. Anonymous means the sender's ordinary profile is not shown to the inbox owner; limited technical information can still be processed for abuse prevention, duplicate-vote protection and service security.
+Canonical Edge Function source: `supabase/functions/picnym-api/`.
+Database changes are tracked in `supabase/migrations/`.
+Public application tables use Row Level Security; privileged database access stays inside the Edge Function.
 
 ## Creator
 
@@ -108,4 +72,4 @@ Designed and developed by **Owojuyigbe Oluwajomiloju**.
 
 GOJO.DEV: https://www.gojodev.name.ng/
 
-Current project URL: https://anonymous.gojodev.name.ng/
+Current production domain: https://anonymous.gojodev.name.ng/
