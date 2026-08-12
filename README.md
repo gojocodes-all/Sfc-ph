@@ -15,6 +15,14 @@ Browser / installable PWA
 
 `main` is the only release branch and source of truth.
 
+### Why this architecture stays small
+
+- Static HTML, CSS and JavaScript keep the public pages crawlable and the first render independent of client hydration.
+- TypeScript Edge Functions keep privileged Supabase access off the browser while preserving the established API contract used by web and Android.
+- Vercel serves the static shell and security headers; Supabase remains responsible for Auth, PostgreSQL and media storage.
+
+The only frontend runtime dependency is `@supabase/supabase-js` for supported browser authentication flows. `esbuild` is a development-only dependency used to bundle that client into one browser script.
+
 ## Product features
 
 - anonymous text, photo and voice-note messages
@@ -49,7 +57,8 @@ Browser / installable PWA
 
 Indexable pages: `/`, `/features`, `/about`, `/safety`, `/privacy`, `/terms`.
 Private/user-generated routes (`/account`, `/reset-password`, `/dashboard/*`, `/u/*`, `/poll/*`) are excluded from indexing.
-The build ships canonical tags, Open Graph/Twitter metadata, JSON-LD, `robots.txt` and `sitemap.xml`.
+The build ships canonical tags, Open Graph/Twitter metadata, WebSite JSON-LD, `robots.txt`, `sitemap.xml`, a 1200×630 preview image and a complete root favicon package (ICO, SVG, 48/96 PNG, Apple and maskable PWA icons).
+The exact site name is consistently declared as `PICNYM`. Google ultimately controls whether and when a favicon or preferred site name appears in search; the repository implements all supported signals but does not claim to override that decision.
 Set `SITE_URL` during a build to move every canonical/site URL to a new domain without editing source files.
 
 ## Frontend
@@ -57,8 +66,7 @@ Set `SITE_URL` during a build to move every canonical/site URL to a new domain w
 ```bash
 cd frontend
 npm install
-npm run check
-npm run build
+npm test
 ```
 
 Optional build variables: `API_BASE_URL`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SITE_URL`, `SUPPORT_PHONE`.

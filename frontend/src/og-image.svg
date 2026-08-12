@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F4F0E7"/>
+  <rect x="56" y="50" width="1088" height="530" fill="none" stroke="#111318" stroke-width="3"/>
+  <rect x="86" y="82" width="80" height="80" rx="14" fill="#111318"/>
+  <path fill="#F7F3EA" d="M102 98h48v38h-24l-15 12v-12h-9z"/>
+  <rect x="112" y="109" width="28" height="6" rx="1" fill="#FF5C35"/>
+  <rect x="112" y="122" width="20" height="6" rx="1" fill="#111318"/>
+  <text x="186" y="135" fill="#111318" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="900" letter-spacing="3">PICNYM</text>
+  <text x="88" y="275" fill="#111318" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="800">Anonymous messages,</text>
+  <text x="88" y="350" fill="#111318" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="800">on your terms.</text>
+  <rect x="89" y="390" width="420" height="15" fill="#FF5C35"/>
+  <text x="88" y="485" fill="#45484F" font-family="Arial, Helvetica, sans-serif" font-size="29">TEXT / PHOTO / VOICE / POLL</text>
+  <text x="88" y="535" fill="#45484F" font-family="Arial, Helvetica, sans-serif" font-size="25">One link. Receiver-controlled.</text>
+  <rect x="1003" y="430" width="105" height="105" fill="#2457F5"/>
+  <rect x="1027" y="455" width="57" height="9" fill="#F4F0E7"/>
+  <rect x="1027" y="479" width="42" height="9" fill="#111318"/>
+</svg>

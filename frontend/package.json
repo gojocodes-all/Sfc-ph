@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
-    "check": "node --check build.mjs && node --check src/app1.js && node --check src/app2.js && node --check src/app3.js && node --check src/app4.js && node --check src/app5.js && node --check src/v2.js && node --check src/auth-ui.js && node --check src/dashboard-v2.js && node --check src/theme.js && node --check src/pro.js && node --check src/service-worker.js"
+    "check": "node --check build.mjs && node --check src/app1.js && node --check src/app2.js && node --check src/app3.js && node --check src/app4.js && node --check src/app5.js && node --check src/v2.js && node --check src/auth-ui.js && node --check src/dashboard-v2.js && node --check src/theme.js && node --check src/pro.js && node --check src/service-worker.js && node --check tests/static.mjs",
+    "test": "npm run check && npm run build && node tests/static.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0"

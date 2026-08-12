@@ -21,8 +21,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install --no-audit --no-fund
-      - run: npm run check
-      - run: npm run build
+      - run: npm test
         env:
           SITE_URL: https://anonymous.gojodev.name.ng
       - name: Verify production output
@@ -39,6 +38,12 @@ jobs:
           test -f dist/privacy.html
           test -f dist/terms.html
           test -f dist/safety.html
+          test -f dist/404.html
+          test -f dist/offline.html
+          test -f dist/favicon.ico
+          test -f dist/favicon-48x48.png
+          test -f dist/apple-touch-icon.png
+          test -f dist/og-image.png
           grep -q "PICNYM" dist/index.html
           grep -q "picnym-api-v4" dist/config.js
           grep -q "PICNYM PREMIUM" dist/pro.js

@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="#4c56e8" d="M8 7h48a5 5 0 0 1 5 5v35a5 5 0 0 1-5 5H25L10 61l4-9H8a5 5 0 0 1-5-5V12a5 5 0 0 1 5-5Z"/><circle cx="24" cy="30" r="6" fill="#fff"/><circle cx="42" cy="30" r="6" fill="#ff6d59"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">PICNYM</title>
+  <rect width="64" height="64" rx="12" fill="#111318"/>
+  <path fill="#F7F3EA" d="M13 13h38v30H32L20 52v-9h-7z"/>
+  <rect x="21" y="22" width="22" height="5" rx="1" fill="#FF5C35"/>
+  <rect x="21" y="32" width="16" height="5" rx="1" fill="#111318"/>
+</svg>

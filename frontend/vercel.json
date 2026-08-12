@@ -20,10 +20,16 @@
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" },
         { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=(self)" },
         { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://ahvusnmuyfvdzjmdkgzj.supabase.co; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; base-uri 'self'; frame-ancestors 'none'; form-action 'self'" }
       ]
+    },
+    {
+      "source": "/(favicon.ico|favicon.svg|favicon-48x48.png|favicon-96x96.png|apple-touch-icon.png|icon-192.png|icon-512.png)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=86400" }]
     },
     {
       "source": "/dashboard/(.*)",

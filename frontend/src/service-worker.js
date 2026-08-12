@@ -1,9 +1,11 @@
-const CACHE_NAME = 'picnym-shell-v5-market';
+const CACHE_NAME = 'picnym-shell-v6-v3';
 const APP_SHELL = [
   '/', '/index.html', '/style.css', '/pro.css', '/market.css', '/theme.js', '/config.js', '/auth.js',
   '/app1.js', '/app2.js', '/app3.js', '/app4.js', '/app5.js', '/v2.js', '/auth-ui.js', '/dashboard-v2.js', '/pro.js',
   '/info.css', '/features.html', '/about.html', '/privacy.html', '/terms.html', '/safety.html',
-  '/favicon.svg', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png'
+  '/favicon.ico', '/favicon.svg', '/favicon-48x48.png', '/favicon-96x96.png',
+  '/apple-touch-icon.png', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png',
+  '/icon-maskable-192.png', '/icon-maskable-512.png', '/og-image.png', '/offline.html'
 ];
 
 self.addEventListener('install', (event) => {
@@ -36,7 +38,7 @@ self.addEventListener('fetch', (event) => {
     } catch {
       const cached = await caches.match(request, { ignoreSearch: request.mode === 'navigate' });
       if (cached) return cached;
-      if (request.mode === 'navigate') return caches.match('/index.html');
+      if (request.mode === 'navigate') return caches.match('/offline.html');
       throw new Error('Offline and resource is not cached.');
     }
   })());

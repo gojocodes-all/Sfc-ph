@@ -1,17 +1,19 @@
 {
   "id": "/",
-  "name": "PICNYM — Anonymous Messages",
+  "name": "PICNYM",
   "short_name": "PICNYM",
   "description": "Anonymous messages, photos, voice notes and polls through one shareable link.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#f7f7fb",
-  "theme_color": "#4c56e8",
+  "background_color": "#f4f0e7",
+  "theme_color": "#111318",
   "categories": ["social", "lifestyle"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

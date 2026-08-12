@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#4c56e8" />
-  <meta name="description" content="PICNYM lets you receive anonymous messages, photos, voice notes and polls through one shareable link." />
+  <meta name="theme-color" content="#111318" />
+  <meta name="description" content="PICNYM gives you one shareable link for anonymous text, photos, voice notes and polls, with controls for replies, filters and blocking." />
   <meta name="keywords" content="anonymous messages, anonymous questions, anonymous photos, anonymous voice notes, anonymous polls, anonymous inbox, PICNYM" />
   <meta name="author" content="Owojuyigbe Oluwajomiloju" />
+  <meta name="application-name" content="PICNYM" />
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,20 +18,27 @@
   <link rel="alternate" hreflang="x-default" href="https://anonymous.gojodev.name.ng/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="PICNYM" />
-  <meta property="og:title" content="PICNYM — Anonymous Messages, Photos, Voice Notes & Polls" />
-  <meta property="og:description" content="Create one anonymous link and receive messages in more than text." />
+  <meta property="og:title" content="PICNYM | Anonymous messages on your terms" />
+  <meta property="og:description" content="One link for anonymous text, photos, voice notes and polls—with the receiver in control." />
   <meta property="og:url" content="https://anonymous.gojodev.name.ng/" />
-  <meta property="og:image" content="https://anonymous.gojodev.name.ng/icon-512.png" />
-  <meta property="og:image:width" content="512" />
-  <meta property="og:image:height" content="512" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="PICNYM — Anonymous Messages, Photos, Voice Notes & Polls" />
-  <meta name="twitter:description" content="Create one anonymous link and receive messages in more than text." />
-  <meta name="twitter:image" content="https://anonymous.gojodev.name.ng/icon-512.png" />
-  <title>PICNYM — Anonymous Messages, Photos, Voice Notes & Polls</title>
+  <meta property="og:image" content="https://anonymous.gojodev.name.ng/og-image.png" />
+  <meta property="og:image:secure_url" content="https://anonymous.gojodev.name.ng/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="PICNYM masked-message mark and the words Anonymous messages, on your terms" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PICNYM | Anonymous messages on your terms" />
+  <meta name="twitter:description" content="One link for anonymous text, photos, voice notes and polls—with the receiver in control." />
+  <meta name="twitter:image" content="https://anonymous.gojodev.name.ng/og-image.png" />
+  <meta name="twitter:image:alt" content="PICNYM masked-message mark and the words Anonymous messages, on your terms" />
+  <title>PICNYM | Anonymous messages, photos, voice notes &amp; polls</title>
   <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
+  <link rel="icon" href="/favicon-48x48.png" type="image/png" sizes="48x48" />
+  <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
   <script src="/theme.js"></script>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/pro.css" />
@@ -39,19 +47,26 @@
   {
     "@context":"https://schema.org",
     "@graph":[
-      {"@type":"WebSite","name":"PICNYM","url":"https://anonymous.gojodev.name.ng/","description":"Anonymous messages, photos, voice notes and polls through one shareable link.","inLanguage":"en-NG"},
-      {"@type":"SoftwareApplication","name":"PICNYM","applicationCategory":"SocialNetworkingApplication","operatingSystem":"Web, Android","url":"https://anonymous.gojodev.name.ng/","description":"Create an anonymous inbox and receive text messages, photos, voice notes and polls.","offers":[{"@type":"Offer","name":"PICNYM Free","price":"0","priceCurrency":"NGN"},{"@type":"Offer","name":"PICNYM Premium","price":"500","priceCurrency":"NGN","description":"Premium creator and organization tools. Billing activation coming soon."}],"creator":{"@type":"Person","name":"Owojuyigbe Oluwajomiloju","url":"https://www.gojodev.name.ng/"}}
+      {"@type":"WebSite","@id":"https://anonymous.gojodev.name.ng/#website","name":"PICNYM","alternateName":["Picnym"],"url":"https://anonymous.gojodev.name.ng/","description":"One shareable link for anonymous text, photos, voice notes and polls, with controls for the receiver.","inLanguage":"en-NG","publisher":{"@id":"https://anonymous.gojodev.name.ng/#organization"}},
+      {"@type":"Organization","@id":"https://anonymous.gojodev.name.ng/#organization","name":"PICNYM","url":"https://anonymous.gojodev.name.ng/","logo":{"@type":"ImageObject","url":"https://anonymous.gojodev.name.ng/icon-512.png","width":512,"height":512}},
+      {"@type":"SoftwareApplication","name":"PICNYM","applicationCategory":"SocialNetworkingApplication","operatingSystem":"Web, Android","url":"https://anonymous.gojodev.name.ng/","description":"Create an anonymous inbox and receive text messages, photos, voice notes and polls.","isAccessibleForFree":true,"creator":{"@type":"Person","name":"Owojuyigbe Oluwajomiloju","url":"https://www.gojodev.name.ng/"}}
     ]
   }
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div id="app">
-    <main class="home"><section class="home-box">
-      <a class="brand" href="/" aria-label="PICNYM home"><span class="brand-mark"><i></i><i></i></span><span class="brand-copy"><strong>PICNYM</strong><span>ANONYMOUS</span></span></a>
-      <h1>Say it anonymously. Share more than text.</h1>
-      <p>Create one link and receive anonymous messages, photos, voice notes and polls.</p>
-    </section></main>
+    <main id="main-content" class="home market-home">
+      <header class="market-nav">
+        <a class="brand" href="/" aria-label="PICNYM home"><img class="brand-mark" src="/favicon.svg" width="40" height="40" alt=""><span class="brand-copy"><strong>PICNYM</strong><span>PRIVATE INBOX</span></span></a>
+        <nav aria-label="Primary navigation"><a href="/features">Features</a><a href="/safety">Safety</a><a class="nav-cta" href="/?auth=signin">Sign in</a></nav>
+      </header>
+      <section class="market-hero static-fallback">
+        <div class="hero-copy"><p class="home-kicker">Anonymous inbox, on your terms</p><h1>Ask for honesty.<br><em>Keep names out of it.</em></h1><p class="hero-lede">Create one link for anonymous text, photos, voice notes and polls. You control who can send, what stays private and what gets a reply.</p><a class="btn primary" href="/?auth=signup">Create your PICNYM link</a></div>
+        <aside class="fallback-note" aria-label="PICNYM formats"><span>ONE LINK / FOUR FORMATS</span><strong>Text</strong><strong>Photo</strong><strong>Voice</strong><strong>Poll</strong></aside>
+      </section>
+    </main>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
   <noscript>PICNYM needs JavaScript for inbox creation, sending and account features. You can still read the Terms, Privacy Policy and Safety pages without it.</noscript>

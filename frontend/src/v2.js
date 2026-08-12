@@ -18,7 +18,7 @@ async function authSession() {
 }
 
 brand = function brand() {
-  return '<a class="brand" href="/" aria-label="PICNYM home"><span class="brand-mark"><i></i><i></i></span><span class="brand-copy"><strong>PICNYM</strong><span>ANONYMOUS</span></span></a>';
+  return '<a class="brand" href="/" aria-label="PICNYM home"><img class="brand-mark" src="/favicon.svg" width="40" height="40" alt=""><span class="brand-copy"><strong>PICNYM</strong><span>PRIVATE INBOX</span></span></a>';
 };
 
 ownerHeaders = function ownerHeaders(token, extra = {}) {
@@ -84,38 +84,34 @@ async function home(modeFromQuery) {
       ${defaultSaved ? `<button type="button" id="openSaved" class="btn saved-inbox-btn">Open saved inbox</button>` : ''}
     </section>` : renderAuthTabs(authMode);
 
-  app.innerHTML = `<main class="home v2-home market-home">
+  app.innerHTML = `<main id="main-content" class="home v2-home market-home">
     <header class="market-nav">
       ${brand()}
       <nav aria-label="Primary navigation"><a href="/features">Features</a><a href="/safety">Safety</a>${session ? '<a href="/account">Account</a>' : '<a class="nav-cta" href="/?auth=signin">Sign in</a>'}</nav>
     </header>
     <section class="market-hero">
       <div class="hero-copy">
-        <div class="home-kicker"><span></span> Text · photos · voice · polls</div>
-        <h1>Say what you mean.<br><em>Keep your name out of it.</em></h1>
-        <p class="hero-lede">PICNYM gives you one link for honest messages and enough control to keep the experience yours.</p>
-        <div class="hero-points"><span>Receiver-controlled</span><span>Built-in safety</span><span>No paid identity reveals</span></div>
-        <div class="message-stack" aria-label="Example PICNYM conversation">
-          <article class="stack-card stack-question"><span>ANONYMOUS</span><strong>What is one thing I should never change?</strong><small>Just now · text</small></article>
-          <article class="stack-card stack-reply"><span>YOUR REPLY</span><strong>Your energy. It makes people feel included.</strong><small>Ready to share</small></article>
-          <div class="stack-types"><span>TXT</span><span>PHOTO</span><span>VOICE</span><span>POLL</span></div>
-        </div>
+        <p class="home-kicker">Anonymous inbox, on your terms</p>
+        <h1>Ask for honesty.<br><em>Keep names out of it.</em></h1>
+        <p class="hero-lede">Create one link for anonymous text, photos, voice notes and polls. You control who can send, what stays private and what gets a reply.</p>
+        <div class="hero-actions"><a class="btn primary" href="#start">Create your PICNYM link</a><a class="text-link" href="/safety">How safety works</a></div>
+        <dl class="hero-facts"><div><dt>01</dt><dd>Private by default</dd></div><div><dt>02</dt><dd>Four message formats</dd></div><div><dt>03</dt><dd>Receiver-controlled</dd></div></dl>
       </div>
-      <div class="hero-panel">${accountCard}</div>
+      <div id="start" class="hero-panel">${accountCard}</div>
     </section>
-    <section class="format-strip" aria-label="PICNYM formats"><span>ONE LINK</span><b>Four ways to answer.</b><div><i>01</i> Text</div><div><i>02</i> Photo</div><div><i>03</i> Voice</div><div><i>04</i> Poll</div></section>
-    <section class="market-section feature-mosaic">
-      <div class="section-heading"><span>Made for real conversations</span><h2>More signal. Less social noise.</h2></div>
-      <div class="mosaic-grid">
-        <article class="mosaic-card coral"><span>Prompt deck</span><h3>Never stare at an empty message box.</h3><p>Conversation starters turn one shared link into something people actually want to answer.</p></article>
-        <article class="mosaic-card ink"><span>Private inbox</span><h3>You decide what becomes public.</h3><p>Messages stay with you unless you reply and deliberately publish an answer.</p></article>
-        <article class="mosaic-card mint"><span>Creator controls</span><h3>Pause, filter, restrict.</h3><p>Hidden words, account-only mode, friend-only mode and sender blocking are built in.</p></article>
-        <article class="mosaic-card paper"><span>Share kit</span><h3>Replies that look ready to post.</h3><p>Turn answers into branded cards and share them as images without exposing the sender.</p></article>
-      </div>
+    <section class="process-section" aria-labelledby="process-title">
+      <div class="section-heading"><span>How PICNYM works</span><h2 id="process-title">One link. Three clear decisions.</h2></div>
+      <ol class="process-list"><li><span>01 / CREATE</span><div><h3>Open a private inbox.</h3><p>Choose the name on the page and the link you want to share.</p></div></li><li><span>02 / COLLECT</span><div><h3>Let people choose how to answer.</h3><p>They can send text, a supported photo, a voice note or a poll.</p></div></li><li><span>03 / CONTROL</span><div><h3>Keep, reply, publish or remove.</h3><p>Nothing becomes a public answer unless you deliberately publish it.</p></div></li></ol>
     </section>
-    <section class="safety-banner">
-      <div><span>CONTROL BEFORE CURIOSITY</span><h2>Anonymous does not mean uncontrolled.</h2><p>Block a sender, report a message, hide words or pause your link whenever you need space.</p></div>
-      <a class="btn safety-btn" href="/safety">See the safety center</a>
+    <section class="format-ledger" aria-labelledby="formats-title">
+      <div class="format-intro"><span>Message formats</span><h2 id="formats-title">More than a text box.</h2><p>Every format arrives in the same private dashboard and follows the same receiver controls.</p></div>
+      <div class="format-rows"><article><b>01</b><h3>Text</h3><p>Questions, feedback and notes.</p></article><article><b>02</b><h3>Photo</h3><p>Supported images with an optional caption.</p></article><article><b>03</b><h3>Voice</h3><p>Recorded audio with a clear playback control.</p></article><article><b>04</b><h3>Poll</h3><p>Shareable choices with anonymous vote totals.</p></article></div>
+    </section>
+    <section class="control-section" aria-labelledby="control-title">
+      <div class="control-visual" aria-hidden="true"><span>INBOX CONTROL</span><i></i><i></i><i></i><strong>YOU DECIDE<br>WHAT HAPPENS NEXT.</strong></div>
+      <div class="control-copy"><span>Control before curiosity</span><h2 id="control-title">Anonymous does not mean uncontrolled.</h2><p>Pause a link, require accounts or friends, disable media, filter hidden words, report content and block a sender.</p><ul><li>No paid identity reveals</li><li>Public answers are opt-in</li><li>Account and inbox deletion controls</li></ul><a class="btn inverse" href="/safety">Open the safety center</a></div>
+    </section>
+    <section class="closing-section"><p>Ready when you are.</p><h2>Make room for an honest answer.</h2><a class="btn primary" href="#start">Create your PICNYM link</a>
     </section>
     <footer class="market-footer">
       ${brand()}
